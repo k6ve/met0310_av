@@ -2,12 +2,22 @@ cmake_minimum_required(VERSION 3.0.2)
 project(my_gazebo)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-# add_compile_options(-std=c++11)
+add_compile_options(-std=c++11)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED)
+find_package(catkin REQUIRED COMPONENTS
+roscpp
+std_msgs
+sensor_msgs
+geometry_msgs
+nav_msgs
+tf
+gazebo_ros
+)
+
+find_package(gazebo REQUIRED)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -103,6 +113,8 @@ catkin_package(
 #  LIBRARIES my_gazebo
 #  CATKIN_DEPENDS other_catkin_pkg
 #  DEPENDS system_lib
+CATKIN_DEPENDS roscpp std_msgs sensor_msgs geometry_msgs nav_msgs tf gazebo_ros
+DEPENDS gazebo
 )
 
 ###########
@@ -111,9 +123,14 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
+
+link_directories(${GAZEBO_LIBRARY_DIRS})
+
 include_directories(
 # include
 # ${catkin_INCLUDE_DIRS}
+${catkin_INCLUDE_DIRS}
+${GAZEBO_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
@@ -187,6 +204,11 @@ include_directories(
 #   # myfile2
 #   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 # )
+
+install(DIRECTORY launch models rviz worlds
+DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
+
 
 #############
 ## Testing ##
